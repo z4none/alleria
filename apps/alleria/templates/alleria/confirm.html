@@ -1,0 +1,30 @@
+{% extends "alleria/_sidebar.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-lg-12">
+                <form action="" class="form-confirm" method="post">
+                    {% csrf_token %}
+                    <h1>请确认</h1>
+                    <p>{{ message }}</p>
+                    <input type="submit" class="btn btn-primary" value="确定" />
+                    <a class="btn btn-default" href="{{ cancel }}">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock main %}
+
+{% block css %}
+    <style>
+    .form-confirm {
+        padding: 10px;
+    }
+
+    .form-confirm h1 {
+        margin: 0 0 10px 0;
+    }
+    </style>
+{% endblock %}

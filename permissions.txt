@@ -1,0 +1,8 @@
+基本:core
+-用户管理:user
+-角色管理:role
+-字典管理:dict
+-日志查看:log
+测试:test
+-测试权限A:test_a
+-测试权限B:test_b

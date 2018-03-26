@@ -1,0 +1,109 @@
+    {% extends "alleria/_sidebar.html" %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block main %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="{% url 'user_list' %}">
+                用户管理
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'user_detail' user.id %}">
+                {{ user }}
+            </a>
+        </li>
+        <li>
+            选择角色
+        </li>
+    </ol>
+    <div class="container-fluid page">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-4">
+                    <span class="role-title">当前角色</span>
+                    <select class="role-list role-selected" name="role_selected[]" size="20" multiple>
+                        {% for role in roles %}
+                            {% if role in selected_roles %}
+                            <option value="{{ role.id }}">{{ role.name }}</option>
+                            {%  endif %}
+                        {%  endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-1 role-btns">
+                    <button class="btn btn-block btn-add">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-block btn-remove">
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="col-sm-4">
+                    <span class="role-title">可选角色</span>
+                    <select class="role-list role-avalible" size="20" multiple>
+                        {% for role in roles %}
+                            {% if not role in selected_roles %}
+                            <option value="{{ role.id }}">{{ role.name }}</option>
+                            {%  endif %}
+                        {%  endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9 text-center role-save">
+                    <button class="btn btn-primary btn-save">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock main %}
+
+{% block js %}
+    <script>
+    $(function(){
+        $(".btn-add").click(function(){
+            $(".role-selected").append($(".role-avalible option:selected"));
+            $("option:selected").prop("selected", false);
+            return false;
+        });
+
+        $(".btn-remove").click(function(){
+            $(".role-avalible").append($(".role-selected option:selected"));
+            $("option:selected").prop("selected", false);
+            return false;
+        });
+
+        $(".btn-save").click(function(){
+            $(".role-selected option").prop("selected", true);
+            return true;
+        })
+    })
+    </script>
+{% endblock %}
+
+{% block css %}
+<style>
+.role-title {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.role-list {
+    width: 100%;
+}
+.role-btns {
+    padding-top: 100px;
+}
+.role-save{
+    margin-top: 30px;
+}
+.btn-save{
+    padding: 6px 30px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "alleria/_navbar.html" %}
+
+{% block body %}
+    {{ block.super }}
+    <aside class="sidebar">
+        <form class="search-box">
+            <div class="input-group">
+                <input type="text" class="form-control sidebae-search" placeholder="Search"/>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </span>
+            </div>
+        </form>
+        <div class="sidebar-menu">
+            <ul>
+                {% for item in MENU %}
+                    <li class="
+                        {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 %}
+                        active
+                        {% endif %}
+                        ">
+                        {% if item.children %}
+                            <a href="#">
+                        {%  else %}
+                            <a href="{{ item.url }}" {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 and ACTIVE_MENU|length == 1 %}
+                            class="highlighting"
+                            {% endif %}
+                            > {{ ACTIVE_MENU.len }}
+                        {% endif %}
+                            <i class="ico fa {% firstof item.icon 'fa-folder' %}"></i>
+                            <span>{{ item.name }}</span>
+
+                            {% if item.children %}
+                                <span class="pull-right">
+                                <i class="arrow fa fa-chevron-left"></i>
+                            </span>
+                            {% endif %}
+                        </a>
+                        {% if item.children %}
+                            <ul class="sub" style="
+                                {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 %}
+                                    display: block;
+                                {% else %}
+                                    display: none;
+                                {% endif %}
+                                ">
+                                {% for child in item.children %}
+                                    <li>
+                                        <a href="{{ child.url }}"
+                                        {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 and child.key == ACTIVE_MENU.1 %}
+                                        class="highlighting"
+                                        {% endif %}
+                                        >
+                                            {{ child.name }}
+                                        </a>
+                                    </li>
+                                {% endfor % %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor % %}
+            </ul>
+        </div>
+    </aside>
+    <div class="main">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block main %}
+        {% endblock main %}
+    </div>
+{% endblock body %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        $(function () {
+            $(".sidebar-menu a").click(function () {
+                var li = $(this).parent();
+                var sub = li.children(".sub");
+                if (sub.length) {
+                    var active = li.hasClass("active");
+                    li.toggleClass("active", !active)
+                    if (active) sub.stop().slideUp(200);
+                    else sub.stop().slideDown(200);
+                }
+            });
+
+            setTimeout(function() {
+                $(".alert").addClass("exit").one("transitionend", function(){
+                    $(this).remove();
+                });
+            }, 10000);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "alleria/_sidebar.html" %}
+
+
+{% block main %}
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="box-success">
+                    <i class="fa fa-check icon-success"></i>
+                    <p>{{ message }}</p>
+                    <a class="btn btn-primary" href="{{ next }}">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}
+
+{% block css %}
+<style>
+    .box-success {
+        padding: 10px;
+    }
+    .icon-success {
+        font-size: 50px;
+        color: #419641;
+    }
+</style>
+{% endblock %}

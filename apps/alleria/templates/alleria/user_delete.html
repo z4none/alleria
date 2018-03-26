@@ -1,0 +1,44 @@
+{% extends "alleria/_sidebar.html" %}
+{% load static %}
+
+{% block main %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="{% url 'user_list' %}">
+                用户管理
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'user_detail' object.id %}">
+                {{ user }}
+            </a>
+        </li>
+        <li>
+            用户删除
+        </li>
+    </ol>
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-lg-12">
+                <form action="" class="form-confirm" method="post">
+                    {% csrf_token %}
+                    <h1>请确认</h1>
+                    <p>你确定要删除 "{{ object }}" 吗?</p>
+                    <input type="submit" class="btn btn-default" value="确定" />
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock main %}
+
+{% block css %}
+    <style>
+    .form-confirm {
+        padding: 10px;
+    }
+
+    .form-confirm h1 {
+        margin: 0 0 10px 0;
+    }
+    </style>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "alleria/_sidebar.html" %}
+{% load static %}
+
+{% block main %}
+    <ol class="breadcrumb">
+        <li>
+            菜单管理
+        </li>
+    </ol>
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="btn btn-default navbar-btn btn-save" href="#">保存</a>
+                            <a class="btn btn-default navbar-btn btn-add" href="#">新建</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-menu">
+                    <thead>
+                    <tr>
+                        <th>级别</th>
+                        <th>名称</th>
+                        <th>编码</th>
+                        <th>图标</th>
+                        <th width="auto">地址</th>
+                        <th width="65px"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for menu in object_list %}
+                        <tr>
+                            <td>
+                                <select class="form-control level">
+                                    <option value="1" {% if menu.level == 1 %} selected {% endif %}>一级菜单</option>
+                                    <option value="2" {% if menu.level == 2 %} selected {% endif %}>&nbsp;&nbsp;&nbsp;&nbsp; 二级菜单</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control name" value="{{ menu.name }}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control key" value="{{ menu.key }}">
+                            </td>
+                            <td>
+                                <button class="btn btn-default icon" data-iconset="fontawesome" data-icon="{{ menu.icon }}"></button>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control url" value="{{ menu.url}}">
+                            </td>
+                            <td class="menu-options text-right"></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <form method="POST" id="form-menu" action="{% url 'menu_update' %}">
+        {% csrf_token %}
+        <textarea name="data"></textarea>
+    </form>
+{% endblock main %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static "bootstrap-iconpicker/js/bootstrap-iconpicker-iconset-all.min.js" %}"></script>
+    <script src="{% static "bootstrap-iconpicker/js/bootstrap-iconpicker.min.js" %}"></script>
+    <script type="text/template" id="menu-options-tmpl">
+        <div class="form-control-static dropdown">
+            <a href="#" class="item-options" data-toggle="dropdown">
+                操作 <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="#" class="add">
+                    添加菜单
+                </a></li>
+                <li><a href="#" class="up">
+                    向上移动
+                </a></li>
+                <li><a href="#" class="down">
+                    向下移动
+                </a></li>
+                <li><a href="#" class="del">
+                    删除
+                </a></li>
+            </ul>
+        </div>
+    </script>
+
+    <script type="text/template" id="row-tmpl">
+        <tr>
+            <td>
+                <select class="form-control level">
+                    <option value="1">一级菜单</option>
+                    <option value="2">&nbsp;&nbsp;&nbsp;&nbsp; 二级菜单</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control name" value="">
+            </td>
+            <td>
+                <input type="text" class="form-control key" value="">
+            </td>
+            <td>
+                <button class="btn btn-default icon" role="iconpicker" data-iconset="fontawesome"></button>
+            </td>
+            <td>
+                <input type="text" class="form-control url" value="">
+            </td>
+            <td class="menu-options text-right"></td>
+        </tr>
+    </script>
+
+    <script>
+    $(function(){
+        $(".menu-options").html($("#menu-options-tmpl").html());
+
+        $(".btn-add").click(function(){
+            var newRow = $($("#row-tmpl").html());
+            newRow.find(".menu-options").html($("#menu-options-tmpl").html());
+            newRow.find(".icon").iconpicker();
+
+            $(".table-menu tbody").append(newRow);
+        });
+
+        $(".btn-save").click(function(){
+            var menus = [];
+            $(".table-menu tbody tr").each(function(){
+                 var level = $(this).find(".level").val();
+                 var name = $(this).find(".name").val();
+                 var key = $(this).find(".key").val();
+                 var icon = $(this).find(".icon input").val();
+                 var url = $(this).find(".url").val();
+
+                 menus.push({
+                     level: level,
+                     name: name,
+                     key: key,
+                     icon: icon,
+                     url: url
+                 });
+            });
+
+            $("#form-menu textarea").val(JSON.stringify(menus));
+            $("#form-menu").submit();
+
+            /*
+            $.ajax({
+                method: "POST",
+                url: "",
+                data: JSON.stringify(menus),
+                dataType: "json"
+            }).then(function(data) {
+                if(data.success) {
+                    toastr.info('保存成功');
+                }
+            })
+            */
+        });
+
+        // add
+        $(document).on("click", ".menu-options .add", function(){
+            var currentRow = $(this).closest("tr");
+            var newRow = $($("#row-tmpl").html());
+            newRow.find(".menu-options").html($("#menu-options-tmpl").html());
+            newRow.find(".icon").iconpicker();
+
+            currentRow.after(newRow);
+        });
+
+        // up
+        $(document).on("click", ".menu-options .up", function(){
+            var currentRow = $(this).closest("tr");
+            var prevRow = currentRow.prev("tr");
+            if(prevRow) {
+                currentRow.after(prevRow);
+            }
+        });
+
+        // down
+        $(document).on("click", ".menu-options .down", function(){
+            var currentRow = $(this).closest("tr");
+            var nextRow = currentRow.next("tr");
+            if(nextRow) {
+                currentRow.before(nextRow);
+            }
+        });
+
+        // delete
+        $(document).on("click", ".menu-options .del", function(){
+            var currentRow = $(this).closest("tr");
+            currentRow.remove();
+        });
+
+        $(".icon").iconpicker();
+    })
+    </script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "bootstrap-iconpicker/css/bootstrap-iconpicker.min.css" %}">
+    <style>
+    #form-menu {
+        display: none;
+    }
+    </style>
+{% endblock %}

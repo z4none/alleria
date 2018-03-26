@@ -1,0 +1,214 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+.navbar-custom {
+  background-color: #444444;
+  border-color: #77aadd;
+}
+.navbar-custom .navbar-brand {
+  color: #cccccc;
+}
+.navbar-custom .navbar-brand:hover,
+.navbar-custom .navbar-brand:focus {
+  color: #ffffff;
+}
+.navbar-custom .navbar-text {
+  color: #cccccc;
+}
+.navbar-custom .navbar-nav > li > a {
+  color: #cccccc;
+}
+.navbar-custom .navbar-nav > li > a:hover,
+.navbar-custom .navbar-nav > li > a:focus {
+  color: #ffffff;
+  background-color: #77aadd;
+}
+.navbar-custom .navbar-nav > .active > a,
+.navbar-custom .navbar-nav > .active > a:hover,
+.navbar-custom .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: #77aadd;
+}
+.navbar-custom .navbar-nav > .open > a,
+.navbar-custom .navbar-nav > .open > a:hover,
+.navbar-custom .navbar-nav > .open > a:focus {
+  color: #ffffff;
+  background-color: #77aadd;
+}
+.navbar-custom .navbar-toggle {
+  border-color: #77aadd;
+}
+.navbar-custom .navbar-toggle:hover,
+.navbar-custom .navbar-toggle:focus {
+  background-color: #77aadd;
+}
+.navbar-custom .navbar-toggle .icon-bar {
+  background-color: #cccccc;
+}
+.navbar-custom .navbar-collapse,
+.navbar-custom .navbar-form {
+  border-color: #cccccc;
+}
+.navbar-custom .navbar-link {
+  color: #cccccc;
+}
+.navbar-custom .navbar-link:hover {
+  color: #ffffff;
+}
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #cccccc;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #ffffff;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #ffffff;
+    background-color: #77aadd;
+  }
+}
+.navbar .navbar-items {
+  float: right;
+  margin: 0;
+  padding: 0;
+}
+.navbar .navbar-items .item {
+  display: inline-block;
+}
+.navbar-btn {
+  margin-right: 2px;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 50px;
+  min-height: 100%;
+  width: 230px;
+  background-color: #f9f9f9;
+  border-right: 1px solid #d2d6de;
+}
+.sidebar .search-box {
+  padding: 15px;
+}
+.sidebar .search-box .sidebae-search {
+  box-shadow: none;
+  background-color: #fff;
+  border: 1px solid #dddddd;
+  border-right: none;
+}
+.sidebar .search-box .btn {
+  box-shadow: none;
+  background-color: #fff;
+  border: 1px solid #dddddd;
+  border-left: none;
+}
+.sidebar .sidebar-menu ul {
+  margin: 0;
+  padding: 0;
+}
+.sidebar .sidebar-menu ul li {
+  list-style: none;
+}
+.sidebar .sidebar-menu ul li a {
+  display: block;
+  padding: 10px 14px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.sidebar .sidebar-menu ul li a.highlighting {
+  background: #3879d9;
+  color: #fff;
+}
+.sidebar .sidebar-menu ul li a .ico {
+  margin-right: 5px;
+}
+.sidebar .sidebar-menu ul li .arrow {
+  transform: rotate(0deg);
+  transition: all 0.2s;
+}
+.sidebar .sidebar-menu ul li.active .arrow {
+  transform: rotate(-90deg);
+}
+.sidebar .sidebar-menu ul.sub {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.sidebar .sidebar-menu ul.sub a {
+  padding-left: 40px;
+}
+.main {
+  margin: 50px 0 0 230px;
+  position: relative;
+}
+.main .breadcrumb {
+  background: #f9f9f9;
+  border-bottom: solid 1px #dddddd;
+  border-radius: 0;
+  margin: 0;
+}
+.main .page-header {
+  background: #f9f9f9;
+  border-bottom: solid 1px #dddddd;
+  margin: 0;
+  padding: 14px;
+}
+.main .page-header::after {
+  content: '';
+  clear: both;
+  display: block;
+}
+.main .page-header .title {
+  float: left;
+}
+.main .page-header .title h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.main .page-header .title span {
+  display: block;
+  color: #999;
+  text-shadow: 0 1px 0 #fff;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.page {
+  padding-top: 15px;
+}
+.pagination {
+  margin: 0;
+}
+.toast-top-right {
+  top: 70px;
+  right: 15px;
+}
+.messages {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 2;
+}
+@keyframes alertEnter {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.messages .alert {
+  animation: 0.3s ease-in 0s 1 alertEnter;
+  margin: 15px;
+  box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.15);
+  transition: all .3s;
+}
+.messages .alert.exit {
+  transform: translateY(-50px);
+  opacity: 0;
+}
