@@ -1,0 +1,180 @@
+{% extends "alleria/_sidebar.html" %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block main %}
+    <ol class="breadcrumb">
+        <li>
+            字典管理
+        </li>
+    </ol>
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <a class="btn btn-default" href="{% url 'dictionary_type_create' %}">新建</a>
+                </div>
+                <div class="types">
+                    {% for type in types %}
+                        {% if type.id == current.id %}
+                        <div class="item active">
+                            <a href="{% url 'dictionary' type.code %}">
+                                {{ type.name }} - {{ type.code }}
+                            </a>
+                            <span class="pull-right">
+                                <a href="{% url 'dictionary_type_update' type.id %}">修改</a> 丨
+                                <a href="{% url 'dictionary_type_delete' type.id %}">删除</a>
+                            </span>
+                        </div>
+                        {% else %}
+                        <div class="item">
+                            <a href="{% url 'dictionary' type.id %}">
+                                {{ type.name }} - {{ type.code }}
+                            </a>
+                        </div>
+                        {%  endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <a class="btn btn-default" href="{% url 'dictionary_item_create' current.id%}">新建</a>
+                    <a class="btn btn-default btn-reorder" data-loading-text="正在保存 ..." href="#">保存顺序</a>
+                </div>
+                <table class="table table-bordered table-dictionary">
+                    <thead>
+                        <tr>
+                            <th>
+                            </th>
+                            <th>
+                                编码
+                            </th>
+                            <th>
+                                名称
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr draggable="true" id="dict-{{ item.code }}" data-id="{{ item.code }}">
+                            <td>
+                                <i class="fa fa-arrows-alt"></i>
+                            </td>
+                            <td>
+                                {{ item.code }}
+                            </td>
+                            <td>
+                                {{ item.name }}
+                            </td>
+                            <td class="text-right">
+                                <a href="{% url 'dictionary_item_update' current.id item.id %}">编辑</a>
+                                <a href="{% url 'dictionary_item_delete' current.id item.id %}">删除</a>
+                            </td>
+                        </tr>
+                        {%  endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock main %}
+
+{% block js %}
+    <script>
+    $(function(){
+        var row = $(".table-dictionary tbody tr");
+        row.on("dragstart",function(e){
+            e.originalEvent.dataTransfer.setData("Text", e.target.id);
+            $(this).addClass("draging");
+        }).on("dragover",function(e){
+            e.preventDefault();
+        }).on("dragenter",function(e){
+            e.preventDefault();
+            $(this).addClass("over");
+        }).on("dragleave",function(e){
+            $(this).removeClass("over");
+        }).on("drop",function(e){
+            e.preventDefault();
+            $(e.target).removeClass("highlight");
+
+            var id = e.originalEvent.dataTransfer.getData("Text");
+
+            var a = $("#"+id);
+            var b = $(e.target).closest("tr");
+
+            a.removeClass("draging");
+            b.removeClass("over");
+
+            if(a.length == 0) return;
+            if(a[0].id == b[0].id) return;
+
+            var ac = $(a).clone(true, true);
+            var bc = $(b).clone(true, true);
+
+            $(ac).insertBefore(b);
+            $(bc).insertBefore(a);
+
+            $(a).remove();
+            $(b).remove();
+        });
+
+        $(".btn-reorder").click(function(){
+            var data = {};
+            $(".table-dictionary tbody tr").each(function(index){
+                data[$(this).data("id")] = index;
+            });
+
+            $(".btn-reorder").button('loading')
+
+            $.ajax({
+                url: "{% url 'dictionary_item_reorder' current.id %}",
+                type: "POST",
+                dataType: "JSON",
+                data: JSON.stringify(data)
+            }).then(function(response){
+                $(".btn-reorder").button('reset')
+            });
+            return false;
+        });
+
+    });
+    </script>
+{% endblock %}
+
+{% block css %}
+<style>
+.types {
+    margin: 0;
+    padding: 0;
+    border: solid 1px #ddd;
+}
+
+.types .item {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.types .item:hover {
+
+}
+
+.types .item.active {
+    background: #3879d9;
+}
+
+.types .item.active * {
+    color: #FFFFFF;
+}
+
+tr.over{
+    background: rgba(155, 233, 255, 0.5);
+}
+
+tr.draging{
+    opacity: 0.3;
+}
+</style>
+{% endblock %}

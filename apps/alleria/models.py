@@ -54,6 +54,20 @@ class Role(models.Model):
         return reverse('role_detail', args=(self.id,))
 
 
+class Department(models.Model):
+    name = models.CharField(
+        max_length=50,
+        blank=False,
+        verbose_name=u"名称")
+
+    parent = models.ForeignKey("Department", null=True, on_delete=models.CASCADE)
+    left = models.IntegerField()
+    right = models.IntegerField()
+
+    def __str__(self):
+        return "dept: {}, {}".format(self.left, self.right)
+
+
 class User(auth_models.AbstractBaseUser):
     name = models.CharField(
         max_length=50,
@@ -127,8 +141,21 @@ class Config(models.Model):
 
 
 class Menu(models.Model):
-    key = models.CharField(max_length=50)
-    name = models.CharField(max_length=20)
-    url = models.CharField(max_length=100, blank=True, null=True)
-    icon = models.CharField(max_length=20, blank=True, null=True)
-    level = models.IntegerField(default=0)
+    code = models.CharField(max_length=50, verbose_name=u"编码")
+    name = models.CharField(max_length=20, verbose_name=u"名称")
+    url = models.CharField(max_length=100, blank=True, null=True, verbose_name=u"地址")
+    icon = models.CharField(max_length=20, blank=True, null=True, verbose_name=u"fa 图标")
+    level = models.IntegerField(default=0, verbose_name=u"级别")
+    enabled = models.BooleanField(verbose_name=u"状态")
+
+
+class DictionaryType(models.Model):
+    code = models.CharField(max_length=50, unique=True, verbose_name=u"编码")
+    name = models.CharField(max_length=20, verbose_name=u"名称")
+
+
+class DictionaryItem(models.Model):
+    code = models.CharField(max_length=50, unique=True, verbose_name=u"编码")
+    type = models.ForeignKey(DictionaryType, related_name="items", on_delete=models.CASCADE, verbose_name=u"类型")
+    name = models.CharField(max_length=20, verbose_name=u"名称")
+    order = models.IntegerField(default=0, verbose_name=u"顺序")

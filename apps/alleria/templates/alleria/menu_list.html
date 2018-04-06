@@ -26,6 +26,7 @@
                     <thead>
                     <tr>
                         <th>级别</th>
+                        <th>状态</th>
                         <th>名称</th>
                         <th>编码</th>
                         <th>图标</th>
@@ -42,11 +43,20 @@
                                     <option value="2" {% if menu.level == 2 %} selected {% endif %}>&nbsp;&nbsp;&nbsp;&nbsp; 二级菜单</option>
                                 </select>
                             </td>
+                            <td class="enabled-td">
+                                <label class="enabled-wrapper">
+                                {% if menu.enabled %}
+                                    <input type="checkbox" class="enabled" checked>
+                                {% else %}
+                                    <input type="checkbox" class="enabled">
+                                {% endif %}
+                                </label>
+                            </td>
                             <td>
                                 <input type="text" class="form-control name" value="{{ menu.name }}">
                             </td>
                             <td>
-                                <input type="text" class="form-control key" value="{{ menu.key }}">
+                                <input type="text" class="form-control code" value="{{ menu.code }}">
                             </td>
                             <td>
                                 <button class="btn btn-default icon" data-iconset="fontawesome" data-icon="{{ menu.icon }}"></button>
@@ -73,6 +83,7 @@
     {{ block.super }}
     <script src="{% static "bootstrap-iconpicker/js/bootstrap-iconpicker-iconset-all.min.js" %}"></script>
     <script src="{% static "bootstrap-iconpicker/js/bootstrap-iconpicker.min.js" %}"></script>
+
     <script type="text/template" id="menu-options-tmpl">
         <div class="form-control-static dropdown">
             <a href="#" class="item-options" data-toggle="dropdown">
@@ -103,11 +114,16 @@
                     <option value="2">&nbsp;&nbsp;&nbsp;&nbsp; 二级菜单</option>
                 </select>
             </td>
+            <td class="enabled-td">
+                <label class="enabled-wrapper">
+                    <input type="checkbox" class="enabled" checked>
+                </label>
+            </td>
             <td>
                 <input type="text" class="form-control name" value="">
             </td>
             <td>
-                <input type="text" class="form-control key" value="">
+                <input type="text" class="form-control code" value="">
             </td>
             <td>
                 <button class="btn btn-default icon" role="iconpicker" data-iconset="fontawesome"></button>
@@ -135,15 +151,17 @@
             var menus = [];
             $(".table-menu tbody tr").each(function(){
                  var level = $(this).find(".level").val();
+                 var enabled = $(this).find(".enabled").is(":checked");
                  var name = $(this).find(".name").val();
-                 var key = $(this).find(".key").val();
+                 var code = $(this).find(".code").val();
                  var icon = $(this).find(".icon input").val();
                  var url = $(this).find(".url").val();
 
                  menus.push({
                      level: level,
+                     enabled: enabled,
                      name: name,
-                     key: key,
+                     code: code,
                      icon: icon,
                      url: url
                  });
@@ -151,19 +169,6 @@
 
             $("#form-menu textarea").val(JSON.stringify(menus));
             $("#form-menu").submit();
-
-            /*
-            $.ajax({
-                method: "POST",
-                url: "",
-                data: JSON.stringify(menus),
-                dataType: "json"
-            }).then(function(data) {
-                if(data.success) {
-                    toastr.info('保存成功');
-                }
-            })
-            */
         });
 
         // add
@@ -210,6 +215,17 @@
     <style>
     #form-menu {
         display: none;
+    }
+
+    .table .enabled-td {
+        padding: 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table .enabled-wrapper {
+        display: block;
+        margin: 0;
     }
     </style>
 {% endblock %}

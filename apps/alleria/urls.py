@@ -1,7 +1,7 @@
 
 from django.urls import path, include
 
-from .views import index, user, role, menu
+from .views import index, user, role, menu, dictionary, department
 
 urlpatterns = [
     path('', index.index, name='index'),
@@ -25,6 +25,23 @@ urlpatterns = [
 
     path('menu_list', menu.MenuList.as_view(), name='menu_list'),
     path('menu_update', menu.MenuUpdate.as_view(), name='menu_update'),
+
+    path('dictionary', dictionary.Dictionary.as_view(), name='dictionary'),
+    path('dictionary/<pk>', dictionary.Dictionary.as_view(), name='dictionary'),
+    path('dictionary_type_create', dictionary.DictionaryTypeCreate.as_view(), name='dictionary_type_create'),
+    path('dictionary_type_update/<pk>', dictionary.DictionaryTypeUpdate.as_view(), name='dictionary_type_update'),
+    path('dictionary_type_delete/<pk>', dictionary.DictionaryTypeDelete.as_view(), name='dictionary_type_delete'),
+    path('dictionary/<pk>/item_create', dictionary.DictionaryItemCreate.as_view(), name='dictionary_item_create'),
+    path('dictionary/<x>/item_update/<pk>', dictionary.DictionaryItemUpdate.as_view(), name='dictionary_item_update'),
+    path('dictionary/<type_pk>/item_delete/<pk>', dictionary.DictionaryItemDelete.as_view(), name='dictionary_item_delete'),
+    path('dictionary/<pk>/reorder', dictionary.DictionaryItemReorder.as_view(), name='dictionary_item_reorder'),
+
+    path('department', department.DepartmentView.as_view(), name='department'),
+    path('department_list', department.DepartmentList.as_view(), name='department_list'),
+    path('department_create', department.DepartmentCreate.as_view(), name='department_create'),
+    path('department_update', department.DepartmentUpdate.as_view(), name='department_update'),
+    path('department_delete', department.DepartmentDelete.as_view(), name='department_delete'),
+    path('department_move', department.DepartmentMove.as_view(), name='department_move'),
 ]
 
 

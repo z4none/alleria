@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import json
+
 from django.apps import apps
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
@@ -11,6 +13,8 @@ from django.forms.models import model_to_dict
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, FormView, DeleteView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.http import JsonResponse
+from django.db.models import Max, F, Q
 
 from .models import Menu
 
@@ -22,6 +26,16 @@ class AMixin(object):
         context = super().get_context_data(**kwargs)
         context["ACTIVE_MENU"] = self.active_menu.split(".") if self.active_menu else False
         return context
+
+
+class AView(AMixin, View):
+    pass
+
+
+class AJSONView(View):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        return JsonResponse(response)
 
 
 class AListView(AMixin, ListView):
@@ -114,10 +128,9 @@ def get_referer(request, default=None):
     return referer
 
 
-
 def get_menu():
     menu = []
-    for item in Menu.objects.all():
+    for item in Menu.objects.filter(enabled=True).order_by("id"):
         item = model_to_dict(item)
         if item["level"] == 1:
             menu.append(item)

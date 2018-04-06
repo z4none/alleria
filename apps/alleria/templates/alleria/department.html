@@ -1,0 +1,321 @@
+{% extends "alleria/_sidebar.html" %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block main %}
+    <ol class="breadcrumb">
+        <li>
+            部门管理
+        </li>
+    </ol>
+    <div class="container-fluid page">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="btn btn-default navbar-btn btn-reload" href="#">刷新</a>
+                            <a class="btn btn-default navbar-btn btn-create" href="#">新建</a>
+                            <a class="btn btn-default navbar-btn btn-edit disabled" href="#">编辑</a>
+                            <a class="btn btn-default navbar-btn btn-delete disabled" href="#">删除</a>
+                        </div>
+                    </div>
+                </nav>
+                <div id="dept-tree" class="ztree">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dialog-create" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">新建部门</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>上级部门</label>
+                        <p class="form-control-static parent"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>名称</label>
+                        <input type="text" class="form-control name" placeholder="部门名称" autofocus>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-ok" data-loading-text="正在保存 ...">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="dialog-edit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">编辑部门</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>名称</label>
+                        <input type="text" class="form-control name" placeholder="部门名称" autofocus>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-ok" data-loading-text="正在保存 ...">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dialog-delete" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">删除部门</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>名称</label>
+                        <p class="form-control-static name"></p>
+                        <p class="text-danger">注意，该部门所有下级部门都会被删除</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-ok" data-loading-text="正在删除 ...">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock main %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static "ztree/js/jquery.ztree.all.min.js" %}"></script>
+    <script>
+    var tree;
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "parent_id",
+                rootPId: null
+            }
+        },
+        edit: {
+            enable: true,
+            drag: {
+                autoExpandTrigger: false,
+                isCopy: false,
+                isMove: true,
+                prev: true,
+                next: true,
+                inner: true,
+                minMoveSize: 20
+            },
+            editNameSelectAll : true,
+            showRemoveBtn: false,
+            showRenameBtn: false
+        },
+        view : {
+            selectedMulti: false
+        },
+        callback: {
+            onClick: onClick,
+            onMouseUp: onMouseUp,
+            beforeDrop: beforeDrop,
+            onDrop: onDrop
+        }
+
+    };
+
+    function getCurrentNode() {
+        var nodes = tree.getSelectedNodes();
+        if(nodes.length) return nodes[0];
+        return null;
+    }
+
+    function onNodeSelected() {
+        $(".btn-edit").removeClass("disabled");
+        $(".btn-delete").removeClass("disabled");
+    }
+
+    function onNodeUnselected() {
+        $(".btn-edit").addClass("disabled");
+        $(".btn-delete").addClass("disabled");
+    }
+
+    function onClick(e, tree_id, node, flag) {
+        onNodeSelected();
+    }
+
+    function onMouseUp(event, treeId, treeNode) {
+        if(treeNode === null) {
+            tree.cancelSelectedNode();
+            onNodeUnselected();
+        }
+    }
+
+    function beforeDrop(tree_id, nodes, target_node, move_type, iscopy) {
+        if(target_node == null /*|| target_node.pId == null*/) return false;
+        return true;
+    }
+
+    function onDrop(e, tree_id, nodes, target_node, move_type, iscopy) {
+        $.ajax({
+            type: "POST",
+            url: "{%  url "department_move" %}",
+            dataType: "json",
+            data: {id: nodes[0].id, target_id: target_node.id, move: move_type}
+        }).then(function(response){
+        });
+    }
+
+
+    // 载入所有数据
+    function loadData(id) {
+        $.ajax({
+            url: "{%  url "department_list" %}",
+            dataType: "json"
+        }).then(function(response){
+            tree = $.fn.zTree.init($("#dept-tree"), setting, response.items);
+            tree.expandAll(true);
+
+            if(id !== undefined) {
+                var node  =tree.getNodeByParam("id", id.toString());
+                tree.selectNode(node);
+            }
+            else {
+                tree.cancelSelectedNode();
+            }
+        });
+    }
+
+    // ready
+    $(function(){
+        loadData();
+
+        // 刷新
+        $(".btn-reload").click(function(){
+            loadData();
+        });
+
+        // 创建新部门
+        $(".btn-create").click(function(){
+            $('#dialog-create').modal();
+        });
+
+        $('#dialog-create').on("show.bs.modal", function(e) {
+            var currentNode = getCurrentNode();
+            var parent = currentNode ? currentNode.name : "<root>";
+            $("#dialog-create .parent").text(parent);
+            $("#dialog-create .name").val("");
+        });
+
+        $("#dialog-create .btn-ok").click(function() {
+            var currentNode = getCurrentNode();
+            var name = $("#dialog-create .name").val();
+            var pid = currentNode ? currentNode.id : "";
+
+            $("#dialog-create .btn-ok").button("loading")
+            $.ajax({
+                type: "POST",
+                url: "{%  url "department_create" %}",
+                dataType: "json",
+                data: {pid: pid, name: name}
+            }).then(function(response){
+                $("#dialog-create .btn-ok").button("reset")
+                if(response.success) {
+                    loadData(response.id);
+                    $('#dialog-create').modal("hide");
+                }
+            });
+        });
+
+        // 编辑所选部门
+        $(".btn-edit").click(function(){
+            var currentNode = getCurrentNode();
+            if(currentNode === null) return;
+            $('#dialog-edit').modal();
+        });
+
+        $('#dialog-edit').on("show.bs.modal", function(e) {
+            var currentNode = getCurrentNode();
+            $("#dialog-edit .name").val(currentNode.name);
+            $(e.target, '[autofocus]').focus()
+        });
+
+        $("#dialog-edit .btn-ok").click(function(){
+            var currentNode = getCurrentNode();
+            var name = $("#dialog-edit .name").val();
+            var id = currentNode.id;
+
+            $("#dialog-edit .btn-ok").button("loading")
+            $.ajax({
+                type: "POST",
+                url: "{%  url "department_update" %}",
+                dataType: "json",
+                data: {id: id, name: name}
+            }).then(function(response){
+                $("#dialog-edit .btn-ok").button("reset")
+                if(response.success) {
+                    currentNode.name = name;
+                    tree.updateNode(currentNode);
+                    $('#dialog-edit').modal("hide");
+                }
+            });
+        });
+
+        $(".btn-delete").click(function(){
+            var currentNode = getCurrentNode();
+            if(currentNode === null) return;
+            $('#dialog-delete').modal();
+        });
+
+        $('#dialog-delete').on("show.bs.modal", function(e) {
+            var currentNode = getCurrentNode();
+            $("#dialog-delete .name").text(currentNode.name);
+        });
+
+        $("#dialog-delete .btn-ok").click(function(){
+            var currentNode = getCurrentNode();
+            var id = currentNode.id;
+
+            $("#dialog-delete .btn-ok").button("loading")
+            $.ajax({
+                type: "POST",
+                url: "{%  url "department_delete" %}",
+                dataType: "json",
+                data: {id: id, name: name}
+            }).then(function(response){
+                $("#dialog-delete .btn-ok").button("reset")
+                if(response.success) {
+                    loadData();
+                    $('#dialog-delete').modal("hide");
+                }
+            });
+        });
+    })
+    </script>
+{% endblock %}
+
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static "ztree/css/zTreeStyle/zTreeStyle.css" %}" />
+    <style>
+    #dept-tree{
+        border: solid 1px #ddd;
+    }
+    </style>
+{% endblock %}

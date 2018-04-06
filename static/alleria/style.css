@@ -1,6 +1,11 @@
 body {
   font-family: 'Open Sans', sans-serif;
 }
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  pointer-events: none;
+}
 .navbar-custom {
   background-color: #444444;
   border-color: #77aadd;
@@ -115,16 +120,19 @@ body {
 }
 .sidebar .sidebar-menu ul li a {
   display: block;
-  padding: 10px 14px;
+  padding: 10px 14px 10px 40px;
   text-decoration: none;
   font-size: 14px;
+  position: relative;
 }
 .sidebar .sidebar-menu ul li a.highlighting {
   background: #3879d9;
   color: #fff;
 }
 .sidebar .sidebar-menu ul li a .ico {
-  margin-right: 5px;
+  position: absolute;
+  left: 15px;
+  top: 15px;
 }
 .sidebar .sidebar-menu ul li .arrow {
   transform: rotate(0deg);

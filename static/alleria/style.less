@@ -2,11 +2,16 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+    pointer-events: none;
+}
+
 @bgDefault: #444444;
 @bgHighlight: #77aadd;
 @colDefault: #cccccc;
 @colHighlight: #ffffff;
 @dropDown: false;
+
 .ddm() when (@dropDown) {
     > li > .dropdown-menu {
         background-color: @bgDefault;
@@ -159,9 +164,10 @@ body {
 
                 a {
                     display: block;
-                    padding: 10px 14px;
+                    padding: 10px 14px 10px 40px;
                     text-decoration: none;
                     font-size: 14px;
+                    position: relative;
 
                     &.highlighting {
                         background: #3879d9;
@@ -169,7 +175,13 @@ body {
                     }
 
                     .ico {
-                        margin-right: 5px;
+                        position: absolute;
+                        left: 15px;
+                        top: 15px;
+                    }
+
+                    span {
+
                     }
                 }
 

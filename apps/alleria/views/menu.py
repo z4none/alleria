@@ -3,7 +3,6 @@ from django.http.response import HttpResponse
 
 
 from ..utils import *
-from ..helpers import *
 from ..models import Menu
 
 
@@ -18,7 +17,8 @@ class MenuUpdate(View):
         menus = []
         for item in data:
             menu = Menu(
-                key=item["key"],
+                code=item["code"],
+                enabled=item["enabled"],
                 name=item["name"],
                 icon=item["icon"],
                 level=item["level"],

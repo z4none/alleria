@@ -40,6 +40,7 @@ DEFAULT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'channels',
     'bootstrap3',
     'debug_toolbar'
 ]
@@ -144,3 +145,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_files")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+# ASGI
+# https://channels.readthedocs.io/en/latest/installation.html
+
+ASGI_APPLICATION = "project.routing.application"

@@ -17,14 +17,14 @@
             <ul>
                 {% for item in MENU %}
                     <li class="
-                        {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 %}
+                        {% if ACTIVE_MENU and item.code == ACTIVE_MENU.0 %}
                         active
                         {% endif %}
                         ">
                         {% if item.children %}
                             <a href="#">
                         {%  else %}
-                            <a href="{{ item.url }}" {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 and ACTIVE_MENU|length == 1 %}
+                            <a href="{{ item.url }}" {% if ACTIVE_MENU and item.code == ACTIVE_MENU.0 and ACTIVE_MENU|length == 1 %}
                             class="highlighting"
                             {% endif %}
                             > {{ ACTIVE_MENU.len }}
@@ -40,7 +40,7 @@
                         </a>
                         {% if item.children %}
                             <ul class="sub" style="
-                                {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 %}
+                                {% if ACTIVE_MENU and item.code == ACTIVE_MENU.0 %}
                                     display: block;
                                 {% else %}
                                     display: none;
@@ -49,7 +49,7 @@
                                 {% for child in item.children %}
                                     <li>
                                         <a href="{{ child.url }}"
-                                        {% if ACTIVE_MENU and item.key == ACTIVE_MENU.0 and child.key == ACTIVE_MENU.1 %}
+                                        {% if ACTIVE_MENU and item.code == ACTIVE_MENU.0 and child.code == ACTIVE_MENU.1 %}
                                         class="highlighting"
                                         {% endif %}
                                         >
