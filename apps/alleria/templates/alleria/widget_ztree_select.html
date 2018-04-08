@@ -1,0 +1,32 @@
+<input type="text" id="id-{{ widget.name }}" role="ztree"
+       data-dialog="dialog-ztree-{{ widget.name }}" class="form-control"
+       value="{{ widget.text }}" readonly="readonly" {% include "django/forms/widgets/attrs.html" %}>
+
+<input type="hidden" id="id-{{ widget.name }}-hidden" name="{{ widget.name }}" value="{{ widget.value }}">
+
+
+<div id="dialog-ztree-{{ widget.name }}" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">
+                    {{ widget.attrs.placeholder }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="ztree"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-ok" data-loading-text="正在保存 ...">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -53,6 +53,9 @@ class Role(models.Model):
     def get_absolute_url(self):
         return reverse('role_detail', args=(self.id,))
 
+    def __str__(self):
+        return "角色: {}".format(self.name)
+
 
 class Department(models.Model):
     name = models.CharField(
@@ -65,7 +68,7 @@ class Department(models.Model):
     right = models.IntegerField()
 
     def __str__(self):
-        return "dept: {}, {}".format(self.left, self.right)
+        return "部门: {}".format(self.name)
 
 
 class User(auth_models.AbstractBaseUser):
@@ -108,6 +111,14 @@ class User(auth_models.AbstractBaseUser):
     roles = models.ManyToManyField(
         Role,
         verbose_name=u"角色")
+
+    department = models.ForeignKey(
+        Department,
+        null=True,
+        blank=True,
+        verbose_name=u"部门",
+        on_delete=models.SET_NULL
+    )
 
     USERNAME_FIELD = 'username'
 

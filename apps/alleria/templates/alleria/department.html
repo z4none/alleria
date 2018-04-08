@@ -100,7 +100,6 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{% static "ztree/js/jquery.ztree.all.min.js" %}"></script>
     <script>
     var tree;
     var setting = {
@@ -312,7 +311,6 @@
 
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static "ztree/css/zTreeStyle/zTreeStyle.css" %}" />
     <style>
     #dept-tree{
         border: solid 1px #ddd;

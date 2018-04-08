@@ -2,8 +2,9 @@
 
 from django import forms
 
-from .models import User
-from .utils import get_app_config
+from .models import User, Role, Department
+from .utils import *
+from .widgets import ZtreeSelect
 
 
 class UserCreateForm(forms.ModelForm):
@@ -13,9 +14,15 @@ class UserCreateForm(forms.ModelForm):
         label=u"密码", initial=get_app_config().default_password,
         help_text=u"默认密码: %s" % get_app_config().default_password)
 
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.order_by("left"),
+        widget=ZtreeSelect(attrs={"placeholder": "请选择部门", "data-url": reverse_lazy("department_list")}),
+        label=u"部门",
+        required=False)
+
     class Meta:
         model = User
-        fields = ["username", "name", "email", "is_active", "is_sa", "raw_password"]
+        fields = ["username", "name", "email", "is_active", "is_sa", "raw_password", "roles", "department"]
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -32,9 +39,20 @@ class UserUpdateForm(forms.ModelForm):
         label=u"重复密码",
         required=False)
 
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.order_by("left"),
+        widget=ZtreeSelect(attrs={"placeholder": "请选择部门", "data-url": reverse_lazy("department_list")}),
+        label=u"部门",
+        required=False)
+
     class Meta:
         model = User
-        fields = ["username", "name", "email", "is_active", "is_sa", "raw_password", "raw_password_repeat"]
+        fields = ["username", "name", "email", "is_active", "is_sa", "raw_password", "raw_password_repeat", "roles",
+                  "department"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["roles"].widget.attrs["size"] = "1"
 
     def clean(self):
         cleaned_data = super(UserUpdateForm, self).clean()
