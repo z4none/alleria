@@ -15,8 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Max, F, Q
-
-from .models import Menu
+from django.db import models, connection
 
 
 class AMixin(object):
@@ -116,6 +115,7 @@ def redirect_error(message="", next=""):
         "next": next
     }))
 
+# ==============================================================
 
 def get_app_config():
     return apps.get_app_config("alleria")
@@ -130,6 +130,7 @@ def get_referer(request, default=None):
 
 def get_menu():
     menu = []
+    from .models import Menu
     for item in Menu.objects.filter(enabled=True).order_by("id"):
         item = model_to_dict(item)
         if item["level"] == 1:
