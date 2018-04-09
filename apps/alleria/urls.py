@@ -1,7 +1,7 @@
 
 from django.urls import path, include
 
-from .views import index, user, role, menu, dictionary, department
+from .views import index, user, role, menu, dictionary, department, log
 
 urlpatterns = [
     path('', index.index, name='index'),
@@ -42,6 +42,8 @@ urlpatterns = [
     path('department_update', department.DepartmentUpdate.as_view(), name='department_update'),
     path('department_delete', department.DepartmentDelete.as_view(), name='department_delete'),
     path('department_move', department.DepartmentMove.as_view(), name='department_move'),
+
+    path('log_list', log.LogList.as_view(), name='log_list'),
 ]
 
 

@@ -170,3 +170,22 @@ class DictionaryItem(models.Model):
     type = models.ForeignKey(DictionaryType, related_name="items", on_delete=models.CASCADE, verbose_name=u"类型")
     name = models.CharField(max_length=20, verbose_name=u"名称")
     order = models.IntegerField(default=0, verbose_name=u"顺序")
+
+
+class BaseLog(models.Model):
+    class Meta:
+        abstract = True
+
+    time = models.DateTimeField(auto_now_add=True)
+    level = models.CharField(max_length=10)
+    name = models.CharField(max_length=50)
+    filename = models.CharField(max_length=50)
+    lineno = models.CharField(max_length=10)
+    message = models.TextField()
+
+    def object(self):
+        return self
+
+
+class Log(BaseLog):
+    pass

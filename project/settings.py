@@ -25,7 +25,7 @@ SECRET_KEY = '#ec@+wxl3ll60v+8ayzfj#h+*ye&1(xx)sw)7g!8q5^mj=(q!g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
@@ -42,7 +42,9 @@ DEFAULT_APPS = [
 THIRD_PARTY_APPS = [
     'channels',
     'bootstrap3',
-    'debug_toolbar'
+    'debug_toolbar',
+    'haystack'
+
 ]
 
 PROJECT_APPS = [
@@ -94,6 +96,60 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+# logging
+# https://docs.djangoproject.com/zh-hans/2.0/topics/logging/
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'common': {
+            'format': '%(asctime)s - %(levelname).1s - %(name)s - %(message)s'
+        },
+        'dbfmt': {
+            'format': '%(message)s'
+        }
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            # 'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'common'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'formatter': 'common'
+        },
+        'db': {
+            'level': 'INFO',
+            'class': 'apps.alleria.utils.DBLoggingHandler',
+            'model': 'apps.alleria.models.Log',
+            'expiry': 86400,
+            'formatter': 'dbfmt'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'apps': {
+            'handlers': ['console', 'db'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    },
 }
 
 
@@ -150,3 +206,15 @@ STATICFILES_DIRS = [
 # https://channels.readthedocs.io/en/latest/installation.html
 
 ASGI_APPLICATION = "project.routing.application"
+
+# WHOOSH
+# http://whoosh.readthedocs.io/en/latest/quickstart.html
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'apps.alleria.whoosh_cn_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

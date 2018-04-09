@@ -1,6 +1,8 @@
 # coding: utf-8
 
 import json
+import json, datetime, random
+import logging
 
 from django.apps import apps
 from django.conf import settings
@@ -16,13 +18,15 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Max, F, Q
 from django.db import models, connection
+from django.utils import timezone
+from logging import Handler
 
 
 class AMixin(object):
     active_menu = False
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) if hasattr(super(), 'get_context_data') else {}
         context["ACTIVE_MENU"] = self.active_menu.split(".") if self.active_menu else False
         return context
 
@@ -116,6 +120,62 @@ def redirect_error(message="", next=""):
     }))
 
 # ==============================================================
+
+
+class DBLoggingHandler(Handler, object):
+    """
+    This handler will add logs to a database model defined in settings.py
+    If log message (pre-format) is a json string, it will try to apply the array onto the log event object
+    """
+
+    model_name = None
+    expiry = None
+
+    def __init__(self, model="", expiry=0):
+        super().__init__()
+        self.model_name = model
+        self.expiry = int(expiry)
+
+    def emit(self, record):
+        # big try block here to exit silently if exception occurred
+        try:
+            # instantiate the model
+            try:
+                Log = self.get_model(self.model_name)
+            except:
+                from .models import Log
+
+            log = Log(level=record.levelname, name=record.name, filename=record.filename, lineno=record.lineno, message=self.format(record))
+
+            # test if msg is json and apply to log record object
+            try:
+                data = json.loads(record.msg)
+                for key, value in data.items():
+                    if hasattr(log, key):
+                        try:
+                            setattr(log, key, value)
+                        except:
+                            pass
+            except:
+                pass
+
+            log.save()
+
+            # clear expired log
+            if self.expiry and random.randint(1, 10) == 1:
+                Log.objects.filter(time__lt=timezone.now() - datetime.timedelta(seconds=self.expiry)).delete()
+        except:
+            raise
+            pass
+
+    def get_model(self, name):
+        names = name.split('.')
+        mod = __import__('.'.join(names[:-1]), fromlist=names[-1:])
+        return getattr(mod, names[-1])
+
+
+# ==============================================================
+
 
 def get_app_config():
     return apps.get_app_config("alleria")
